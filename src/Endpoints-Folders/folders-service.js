@@ -3,7 +3,7 @@ const FoldersService= {
         return db('folders').select('*')
     },
     insertFolder(db,data){
-        return db('folders')
+        return db.into('folders')
             .insert(data)
             .returning('*').then(rows=>rows[0])
     },

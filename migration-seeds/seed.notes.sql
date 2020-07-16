@@ -1,3 +1,9 @@
+INSERT INTO folders (name) 
+VALUES
+    ('Important'),
+    ('Super'),
+    ('Spangley');
+
 INSERT INTO notes(name,folderId,content)
 VALUES
     (
