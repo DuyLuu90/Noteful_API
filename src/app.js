@@ -3,9 +3,11 @@ require('dotenv').config() // allow us to get access to variables inside the env
 const express= require('express')
 const morgan= require('morgan') // midleware, used for logging request details
 const cors = require('cors')
-const logger=require('./logger')
 const helmet= require('helmet')
 const {NODE_ENV, API_TOKEN}= require('./config')
+
+//const logger=require('./logger')
+
 const foldersRouter= require('./Endpoints-Folders/folders-router')
 const notesRouters=require('./Endpoints-Notes/notes-router')
 
@@ -13,12 +15,13 @@ const notesRouters=require('./Endpoints-Notes/notes-router')
 const app= express()
 
 //MIDDLEWARES
-app.use(express.json())//parse the body and give us a properly formatted obj
+//app.use(express.json())//parse the body and give us a properly formatted obj
 /*
 const morganSetting=(NODE_ENV === 'production'? 'tiny': 'common')
 app.use(morgan(morganSetting)) */
-app.use(cors())
 app.use(helmet())
+app.use(cors())
+
 
 //Authorization
 

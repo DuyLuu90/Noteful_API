@@ -9,7 +9,7 @@ describe.skip('Folders service object', () => {
     before('setup db', () => {
         db = knex({
         client: 'pg',
-        connection: process.env.TEST_DB_URL});
+        connection: process.env.TEST_DATABASE_URL});
     });
     before('clean db', () => db('folders').truncate());
     afterEach('clean db', () => db('folders').truncate());
@@ -128,7 +128,7 @@ describe.skip('Notes service object',()=>{
     before('setup db', () => {
         db = knex({
         client: 'pg',
-        connection: process.env.TEST_DB_URL});
+        connection: process.env.TEST_DATABASE_URL});
     });
     before('clean db', () => db('notes').truncate());
     afterEach('clean db', () => db('notes').truncate());

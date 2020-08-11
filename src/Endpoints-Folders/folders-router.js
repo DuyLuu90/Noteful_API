@@ -72,7 +72,7 @@ FoldersRouter.route(`/:folderId`)
                 error:{ message: `Req body must contain 'name'`}})
         }
         FoldersService.updateFolderById(knexInstance,req.params.folderId,folderToUpdate)
-        .then(()=>res.status(204).end())
+        .then(()=>{return res.status(204).end()})
         .catch(next)
     })
 

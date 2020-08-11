@@ -10,11 +10,11 @@ const cleanTables = require('./fixtures').cleanTables
 /*NOTES:
     ()=>{return db().select()} vs ()=> db().select()
 */
-describe('folders Endpoints', ()=>{
+describe.only('folders Endpoints', ()=>{
     let db;
     
     before('make db connection', ()=> {
-        db= knex( {client: 'pg',connection: TEST_DB_URL} ) 
+        db= knex( {client: 'pg',connection: TEST_DATABASE_URL} ) 
         app.set('db',db) 
     })
     before('cleanup', ()=> cleanTables(db))

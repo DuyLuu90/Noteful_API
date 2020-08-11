@@ -13,10 +13,10 @@ const {testFolders,testNotes}=helpers.makeDataFixtures
     ()=> {return db().select()} vs ()=> db().select()
  */
 
-describe.only('notes Endpoints', ()=>{
+describe.skip('notes Endpoints', ()=>{
     let db;
     before('make db connection', ()=> {
-        db= knex( {client: 'pg',connection: TEST_DB_URL} ) 
+        db= knex( {client: 'pg',connection: TEST_DATABASE_URL} ) 
         app.set('db',db) 
     })
     
