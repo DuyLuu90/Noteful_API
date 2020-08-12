@@ -1,10 +1,12 @@
 const express= require('express')
 const NotesService = require('./notes-service')
-
 const NotesRouter = express.Router()
+
+//MIDDLEWARE 
+const {requireAuth}= require('../middleware/basic-auth')
+
 const path= require('path')
 const bodyParser = express.json()
-
 const xss= require('xss')
 const serializedNote = note => ({
     id: note.id,
@@ -15,6 +17,7 @@ const serializedNote = note => ({
 })
 
 NotesRouter.route('/')
+    .all(requireAuth)
     .get((req,res,next)=>{
         NotesService.getAllnotes(req.app.get('db'))
         .then(notes=>res.json(notes.map(serializedNote)))
@@ -36,6 +39,7 @@ NotesRouter.route('/')
     })
 
 NotesRouter.route(`/:Note_id`)
+    .all(requireAuth)
     .all((req,res,next)=>{
         const {Note_id}= req.params
         NotesService.getById(req.app.get('db'),Note_id)
