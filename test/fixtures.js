@@ -1,3 +1,5 @@
+const app= require('../src/app')
+
 function makeFoldersArray() {
     return [
         {id: 1,name: "Important"},
@@ -30,21 +32,53 @@ function makeNotesArray() {
           }
     ]
 }
+function makeNewItem(){
+  const folders= makeFoldersArray()
+  const newFolder= {"name":"New Folder"}
+  const newNote={"name":"New Note","folderid": folders[0].id,"content":"new content"}
+  return {newFolder,newNote}
+}
+function makeUpdatedItem(){
+  const folder= {"name":"Updated Name"}
+  const note= {"name":"Updated name"}
+  return {folder,note}
+}
 function makeDataFixtures(){
   const testFolders= makeFoldersArray()
   const testNotes= makeNotesArray()
   return {testFolders,testNotes}
 }
-function seedDataTables(db,folders,notes) {
-  return db.into('folders').insert(folders)
-  .then(()=>db.into('notes').insert(notes))
+function getTestData(name){
+  const {testFolders,testNotes}= makeDataFixtures()
+  const {newFolder,newNote}= makeNewItem()
+  const {folder,note}= makeUpdatedItem()
+  const array=[
+    {db:"folders",all: testFolders,newItem:newFolder, updatedFields:folder},
+    {db:"notes", all: testNotes,newItem: newNote,updatedFields:note}
+  ]
+  const obj=array.find(obj=>obj.db===name)||{all:[],newItem:{},updatedFields:{}}
+  
+  const AllItems=obj.all
+  const NewItem=obj.newItem
+  const UpdatedFields=obj.updatedFields
+  return {AllItems,NewItem,UpdatedFields}
 }
-
+function seedTable(db,dbName,items){
+  return db.into(dbName).insert(items)
+      .then(()=>db.raw(
+          `SELECT setval('${dbName}_id_seq',?)`,
+          [items[items.length-1].id]
+      ))
+}
+function seedDataTables(db,folders,notes) {
+  return seedTable(db,'folders',folders)
+    .then(()=>seedTable(db,'notes',notes))
+}
 function cleanTables(db){
   return db.raw(
     `TRUNCATE
-      folders,
-      notes
+      notes,
+      folders
     RESTART IDENTITY CASCADE`
   )
 }
@@ -68,6 +102,23 @@ function cleanTables(db) {
   )
 }
 */
+function makeFetchRequests(endpoint,valid,invalid){
+  const token= `Basic ${process.env.API_TOKEN}`
+  const get= supertest(app).get(`/api/${endpoint}`).set('Authorization',token)
+  const post= supertest(app).post(`/api/${endpoint}`).set('Authorization',token)
+  const invalidFetch=[
+      {GET: supertest(app).get(`/api/${endpoint}/${invalid}`).set('Authorization',token)},
+      {DELETE: supertest(app).delete(`/api/${endpoint}/${invalid}`).set('Authorization',token)},
+      {PATCH: supertest(app).patch(`/api/${endpoint}/${invalid}`).set('Authorization',token)}
+  ]
+  const validFetch={
+      GET: supertest(app).get(`/api/${endpoint}/${valid}`).set('Authorization',token),
+      DELETE: supertest(app).delete(`/api/${endpoint}/${valid}`).set('Authorization',token),
+      PATCH: supertest(app).patch(`/api/${endpoint}/${valid}`).set('Authorization',token)
+  }
+
+  return {get,post,invalidFetch,validFetch}
+}
 
 module.exports = {
   makeFoldersArray,
@@ -75,4 +126,6 @@ module.exports = {
   makeDataFixtures,
   seedDataTables,
   cleanTables,
+  makeFetchRequests,
+  getTestData,
 }

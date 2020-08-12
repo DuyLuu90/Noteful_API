@@ -1,8 +1,8 @@
-const notesService= {
+const NotesService= {
     getAllnotes(db){
         return db('notes').select('*')
     },
-    insertNotes(db,data){
+    insertNote(db,data){
         return db('notes')
             .insert(data)
             .returning('*').then(rows=>rows[0])
@@ -21,4 +21,4 @@ const notesService= {
     }
 }
 
-module.exports = notesService
+module.exports = NotesService

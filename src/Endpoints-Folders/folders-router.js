@@ -18,7 +18,10 @@ FoldersRouter.route('/')
         .catch(next)
     })
     .post(bodyParser,(req,res,next)=>{
-        const requiredFields= ['id','name']
+        const {name}= req.body
+        const newFolder= {name}
+
+        const requiredFields= ['name']
         for (const field of requiredFields) {
             if(!req.body[field]) {
                 //logger.error(`${field} is required`)
@@ -28,8 +31,7 @@ FoldersRouter.route('/')
         for (const [key,value] of Object.entries(newFolder)) {
             if (value==null) res.status(400).json({error:{message: `Missing '${key}' in req body`}})
         }*/
-        const {id,name}= req.body
-        const newFolder= {id,name}
+        
         FoldersService.insertFolder(req.app.get('db'), newFolder)
         .then(folder=>{
             res.status(201)
@@ -45,7 +47,7 @@ FoldersRouter.route(`/:folderId`)
         FoldersService.getById(req.app.get('db'),folderId)
         .then(folder=>{
             if(!folder) { 
-                return res.status(404).json({error:{message: `Folder doesn't exist`}})
+                return res.status(404).json({error:{message: `Requested item doesn't exist`}})
             }
             res.folder= folder
             next()
@@ -58,10 +60,10 @@ FoldersRouter.route(`/:folderId`)
     .delete((req,res,next)=>{
         const knexInstance=req.app.get('db')
         FoldersService.deleteFolderById(knexInstance,req.params.folderId)
-        .then(()=>res.status(204).end())
+        .then(()=>res.status(200).json('Success'))
         .catch(next)
     })
-    .patch((req,res,next)=>{
+    .patch(bodyParser,(req,res,next)=>{
         const knexInstance=req.app.get('db')
         const {name}= req.body
         const folderToUpdate= {name}
@@ -72,7 +74,7 @@ FoldersRouter.route(`/:folderId`)
                 error:{ message: `Req body must contain 'name'`}})
         }
         FoldersService.updateFolderById(knexInstance,req.params.folderId,folderToUpdate)
-        .then(()=>{return res.status(204).end()})
+        .then(()=>{return res.status(200).json('Success')})
         .catch(next)
     })
 

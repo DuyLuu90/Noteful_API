@@ -2,7 +2,7 @@ const knex = require('knex');
 const FoldersService = require('../src/Endpoints-Folders/folders-service')
 const NotesService= require('../src/Endpoints-Notes/notes-service')
 
-
+/*
 describe.skip('Folders service object', () => {
     let db;
     const testFolders = require('./fixtures').makeFoldersArray();
@@ -119,7 +119,7 @@ describe.skip('Folders service object', () => {
                     expect(Folder).to.eql(updatedFolder)})
             });
         });
-    });*/
+    });
 });
 
 describe.skip('Notes service object',()=>{
@@ -235,3 +235,4 @@ describe.skip('Notes service object',()=>{
 
 })
 
+*/

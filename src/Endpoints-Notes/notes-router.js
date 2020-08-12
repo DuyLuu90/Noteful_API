@@ -30,7 +30,7 @@ NotesRouter.route('/')
         const {name,folderid,content}= req.body
         const newNote= {name,folderid,content}
         NotesService.insertNote(req.app.get('db'),newNote)
-        .then(Note=>res.status(201).location(path.posix.join(req.originalUrl+`${Note.id}`))
+        .then(Note=>res.status(201).location(path.posix.join(req.originalUrl+`/${Note.id}`))
         .json(serializedNote(Note)))
         .catch(next)
     })
@@ -41,7 +41,7 @@ NotesRouter.route(`/:Note_id`)
         NotesService.getById(req.app.get('db'),Note_id)
         .then(note=>{
             if(!note) { 
-                return res.status(404).json({error:{message: `Note doesn't exist`}})}
+                return res.status(404).json({error:{message: `Requested item doesn't exist`}})}
             res.note= note
             next()
         })
@@ -53,10 +53,10 @@ NotesRouter.route(`/:Note_id`)
     .delete((req,res,next)=>{
         const knexInstance=req.app.get('db')
         NotesService.deleteNoteById(knexInstance,req.params.Note_id)
-        .then(()=>res.status(204).end())
+        .then(()=>res.status(200).json('Success'))
         .catch(next)
     })
-    .patch((req,res,next)=>{
+    .patch(bodyParser,(req,res,next)=>{
         const knexInstance=req.app.get('db')
         const {name,content,folderid}= req.body
         const noteToUpdate= {name,content,folderid}
@@ -67,7 +67,7 @@ NotesRouter.route(`/:Note_id`)
                 error:{ message: `Req body must contain either'name','content'or 'folderId'`}})
         }
         NotesService.updateNote(knexInstance,req.params.Note_id,noteToUpdate)
-        .then(()=>res.status(204).end())
+        .then(()=>res.status(200).json('Success'))
         .catch(next)
     })
 
