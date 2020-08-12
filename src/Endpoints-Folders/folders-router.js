@@ -1,10 +1,12 @@
 const express= require('express')
 const FoldersService = require('./folders-service')
-
 const FoldersRouter = express.Router()
+
+//MIDDLEWARE 
+const {requireAuth}= require('../middleware/basic-auth')
+
 const path= require('path')
 const bodyParser = express.json()
-
 const xss= require('xss')
 const serializedFolder = folder => ({
     id: folder.id,
@@ -12,6 +14,7 @@ const serializedFolder = folder => ({
 })
 
 FoldersRouter.route('/')
+    .all(requireAuth)
     .get((req,res,next)=>{
         FoldersService.getAllFolders(req.app.get('db'))
         .then(folders=>res.json(folders.map(serializedFolder)))
@@ -42,6 +45,7 @@ FoldersRouter.route('/')
     })
 
 FoldersRouter.route(`/:folderId`)
+    .all(requireAuth)
     .all((req,res,next)=>{
         const {folderId}= req.params
         FoldersService.getById(req.app.get('db'),folderId)
