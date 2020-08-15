@@ -3,8 +3,8 @@ const NotesService= {
         return db('notes').select('*')
     },
     insertNote(db,data){
-        return db('notes')
-            .insert(data)
+        return db('notes').insert(data)
+            .then(()=>db.raw(`SELECT setval('notes_id_seq',?)`,[notes[notes.length-1].id]))
             .returning('*').then(rows=>rows[0])
     },
     getById(db,id){
