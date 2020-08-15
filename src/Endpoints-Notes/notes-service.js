@@ -5,7 +5,7 @@ const NotesService= {
     insertNote(db,data){
         return db('notes').insert(data)
             .then(()=>db.raw(`SELECT setval('notes_id_seq',?)`,[notes[notes.length-1].id]))
-            .returning('*').then(rows=>rows[0])
+            //.returning('*').then(rows=>rows[0])
     },
     getById(db,id){
         return db('notes').select('*')
